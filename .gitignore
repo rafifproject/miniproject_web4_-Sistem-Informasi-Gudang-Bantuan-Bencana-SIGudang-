@@ -13,3 +13,7 @@ desktop.ini
 *.log
 scratch/
 tmp/
+node_modules/
+package-lock.json
+package.json
+capture_all.js
