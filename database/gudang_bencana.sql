@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS `distribution_targets`;
 DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `suppliers`;
 DROP TABLE IF EXISTS `categories`;
+DROP TABLE IF EXISTS `user_profiles`;
 DROP TABLE IF EXISTS `users`;
 
 -- ============================================================
@@ -38,6 +39,24 @@ CREATE TABLE `users` (
   `created_at`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- TABEL 1B: user_profiles (Relasi One-to-One dengan users)
+-- Memisahkan kredensial login dan profil (FK + UNIQUE)
+-- Sesuai Capaian Pembelajaran Relational Database (Slide 5 & 6)
+-- ============================================================
+CREATE TABLE `user_profiles` (
+  `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id`    INT UNSIGNED NOT NULL,
+  `full_name`  VARCHAR(150) NOT NULL,
+  `phone`      VARCHAR(50)           DEFAULT NULL,
+  `address`    TEXT                  DEFAULT NULL,
+  `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_user_profile_user_id` (`user_id`),
+  CONSTRAINT `fk_user_profile_user` FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -162,6 +181,12 @@ INSERT INTO `users` (`id`, `username`, `password_hash`, `role`, `full_name`, `em
 (1, 'admin', '$2y$12$jg89L5CpR3a5a9gW2Wmq5.F.AItkJVKCP6e6pdqc8QM1N9D0ixZxe', 'admin', 'Administrator Sistem', 'admin@sigudang.id', 1),
 (2, 'staff1', '$2y$12$zX3vvNleayhHYDDFb7wqtehbbmukmLH18tXdxwp7O1nQrZC7ZRzTG', 'staff', 'Budi Santoso', 'budi@sigudang.id', 1),
 (3, 'staff2', '$2y$12$sN0i5XMDhpFRrw6NxY3/cObOcohREe5XmK5SJCYbfP8f31cN1HSxe', 'staff', 'Siti Rahayu', 'siti@sigudang.id', 1);
+
+-- 1B. Profil Pengguna (One-to-One dengan users via user_id UNIQUE)
+INSERT INTO `user_profiles` (`id`, `user_id`, `full_name`, `phone`, `address`) VALUES
+(1, 1, 'Administrator Sistem', '081234567890', 'Kantor BPBD / Gudang Pusat Logistik'),
+(2, 2, 'Budi Santoso', '081234567891', 'Gudang Posko Lapangan 1'),
+(3, 3, 'Siti Rahayu', '081234567892', 'Gudang Posko Lapangan 2');
 
 -- 2. Kategori Logistik
 INSERT INTO `categories` (`id`, `name`, `description`) VALUES

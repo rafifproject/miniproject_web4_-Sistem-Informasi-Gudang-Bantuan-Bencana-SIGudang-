@@ -49,6 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         VALUES (?, ?, ?, ?, ?, ?, NOW())
                     ");
                     $stmtInsert->execute([$username, $hash, $role, $fullName, $email ?: null, $isActive]);
+                    $newUserId = (int)$db->lastInsertId();
+
+                    // Sinkronisasi relasi One-to-One: user_profiles
+                    $db->prepare("INSERT INTO user_profiles (user_id, full_name, created_at) VALUES (?, ?, NOW())")
+                       ->execute([$newUserId, $fullName]);
+
                     flashSet('user_msg', "Pengguna baru '{$username}' berhasil ditambahkan.", 'success');
                     redirect('/admin/pengguna.php');
                 }
@@ -77,6 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     WHERE id = ?
                 ");
                 $stmtUpdate->execute([$fullName, $email ?: null, $role, $isActive, $userId]);
+
+                // Sinkronisasi relasi One-to-One: user_profiles
+                $db->prepare("INSERT INTO user_profiles (user_id, full_name) VALUES (?, ?) ON DUPLICATE KEY UPDATE full_name=VALUES(full_name)")
+                   ->execute([$userId, $fullName]);
+
                 flashSet('user_msg', 'Data pengguna berhasil diperbarui.', 'success');
                 redirect('/admin/pengguna.php');
             }

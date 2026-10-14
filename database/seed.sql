@@ -12,6 +12,12 @@ INSERT IGNORE INTO `users` (`username`,`password_hash`,`role`,`full_name`,`email
 ('staff1', '$2y$12$zX3vvNleayhHYDDFb7wqtehbbmukmLH18tXdxwp7O1nQrZC7ZRzTG', 'staff', 'Budi Santoso', 'budi@sigudang.id', 1),
 ('staff2', '$2y$12$sN0i5XMDhpFRrw6NxY3/cObOcohREe5XmK5SJCYbfP8f31cN1HSxe', 'staff', 'Siti Rahayu', 'siti@sigudang.id', 1);
 
+-- User Profiles (One-to-One dengan users via user_id UNIQUE)
+INSERT IGNORE INTO `user_profiles` (`user_id`,`full_name`,`phone`,`address`) VALUES
+(1, 'Administrator Sistem', '081234567890', 'Kantor BPBD / Gudang Pusat Logistik'),
+(2, 'Budi Santoso', '081234567891', 'Gudang Posko Lapangan 1'),
+(3, 'Siti Rahayu', '081234567892', 'Gudang Posko Lapangan 2');
+
 -- Categories
 INSERT IGNORE INTO `categories` (`name`,`description`) VALUES
 ('Pangan', 'Bahan makanan dan minuman untuk korban bencana'),

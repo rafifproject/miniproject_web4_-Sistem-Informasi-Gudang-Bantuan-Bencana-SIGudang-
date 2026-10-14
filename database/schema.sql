@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- Sistem Informasi Gudang Bantuan Bencana
 -- Schema Database v1.0
 -- ============================================================
@@ -23,6 +23,23 @@ CREATE TABLE IF NOT EXISTS `users` (
   `created_at`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- Relasi One-to-One: users <-> user_profiles (FK + UNIQUE)
+-- Sesuai Capaian Pembelajaran Relational Database (Slide 5 & 6)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `user_profiles` (
+  `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id`    INT UNSIGNED NOT NULL,
+  `full_name`  VARCHAR(150) NOT NULL,
+  `phone`      VARCHAR(50)           DEFAULT NULL,
+  `address`    TEXT                  DEFAULT NULL,
+  `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_user_profile_user_id` (`user_id`),
+  CONSTRAINT `fk_user_profile_user` FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `categories` (

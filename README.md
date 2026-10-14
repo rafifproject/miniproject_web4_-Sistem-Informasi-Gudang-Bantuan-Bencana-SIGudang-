@@ -207,19 +207,33 @@ Berikut adalah tangkapan layar asli (*live captured*) dan penjelasan fungsional 
 
 ---
 
-## 🗄 Struktur Database & Diagram ERD
+## 🗄 Struktur Database & Diagram ERD (Sesuai Ketentuan Pertemuan 4)
+
+Sesuai materi perkuliahan (*Slide 5, 6, 7, 8 Pertemuan 4*), database ini mengimplementasikan ketiga jenis relasi relasional utama:
+
+1. 🟢 **One-to-One (1 : 1)**: `users` ↔ `user_profiles` (FK `user_id` + `UNIQUE`). Memisahkan data login dan profil pengguna.
+2. 🔵 **One-to-Many (1 : N)**: `categories` → `products`, `products` → `stock_movements`, `users` → `stock_movements`, dll.
+3. 🟣 **Many-to-Many (M : N)**: `products` ↔ `suppliers` melalui tabel perantara (*junction table*) `product_suppliers` dengan *Composite Primary Key* `(product_id, supplier_id)`.
+
+---
 
 ### Entity Relationship Diagram (ERD)
 
 ```mermaid
 erDiagram
-    users ||--o{ stock_movements : "mencatat (user_id)"
-    categories ||--|{ products : "memiliki (category_id)"
-    products ||--|{ product_suppliers : "disediakan oleh (product_id)"
-    suppliers ||--|{ product_suppliers : "menyediakan (supplier_id)"
-    products ||--o{ stock_movements : "mengalami mutasi (product_id)"
-    suppliers ||--o{ stock_movements : "sumber donasi IN (supplier_id)"
-    distribution_targets ||--o{ stock_movements : "tujuan distribusi OUT (distribution_target_id)"
+    %% 1. RELASI ONE-TO-ONE (1:1)
+    users ||--|| user_profiles : "1:1 has profile (user_id UNIQUE)"
+
+    %% 2. RELASI ONE-TO-MANY (1:N)
+    categories ||--|{ products : "1:N has products (category_id)"
+    products ||--o{ stock_movements : "1:N tracks mutations (product_id)"
+    users ||--o{ stock_movements : "1:N records transaction (user_id)"
+    suppliers ||--o{ stock_movements : "1:N donates IN (supplier_id)"
+    distribution_targets ||--o{ stock_movements : "1:N receives OUT (distribution_target_id)"
+
+    %% 3. RELASI MANY-TO-MANY (M:N via Junction Table)
+    products ||--|{ product_suppliers : "M:N junction (product_id)"
+    suppliers ||--|{ product_suppliers : "M:N junction (supplier_id)"
 
     users {
         int id PK
@@ -229,6 +243,15 @@ erDiagram
         string full_name
         string email
         tinyint is_active
+        datetime created_at
+    }
+
+    user_profiles {
+        int id PK
+        int user_id FK, UK
+        string full_name
+        string phone
+        text address
         datetime created_at
     }
 
@@ -295,16 +318,19 @@ erDiagram
     }
 ```
 
+---
+
 ### Matriks Relasi Antar Tabel & Integritas Referensial
 
-| Relasi | Tabel Induk (Parent) | Tabel Anak (Child) | Jenis Relasi | Foreign Key & Constraint | Aturan Bisnis & Integritas |
-| :--- | :--- | :--- | :---: | :--- | :--- |
-| **Kategori & Produk** | `categories` (`id`) | `products` (`category_id`) | **1 : N** (One-to-Many) | `ON UPDATE CASCADE`<br>`ON DELETE RESTRICT` | Satu kategori menampung banyak produk. Kategori tidak dapat dihapus jika masih ada produk di dalamnya. |
-| **Produk & Supplier** | `products` (`id`)<br>`suppliers` (`id`) | `product_suppliers`<br>(Junction Table) | **M : N** (Many-to-Many) | Composite PK `(product_id, supplier_id)`<br>`ON DELETE CASCADE` | Satu produk dapat disediakan banyak supplier, dan satu supplier dapat memasok banyak produk dengan penetapan harga per supplier. |
-| **Produk & Mutasi Stok** | `products` (`id`) | `stock_movements` (`product_id`) | **1 : N** (One-to-Many) | `ON UPDATE CASCADE`<br>`ON DELETE RESTRICT` | Satu produk memiliki riwayat transaksi masuk/keluar. Produk tidak boleh dihapus sembarangan jika memiliki riwayat mutasi. |
-| **Operator & Mutasi Stok** | `users` (`id`) | `stock_movements` (`user_id`) | **1 : N** (One-to-Many) | `ON UPDATE CASCADE`<br>`ON DELETE RESTRICT` | Menjamin audit trail: setiap mutasi wajib mencatat operator (admin/staff) yang mengeksekusi transaksi. |
-| **Supplier & Bantuan Masuk** | `suppliers` (`id`) | `stock_movements` (`supplier_id`) | **1 : N** (One-to-Many, Opsional) | `ON UPDATE CASCADE`<br>`ON DELETE SET NULL` | Mencatat asal donatur/supplier pada transaksi `IN`. Bernilai NULL untuk transaksi `OUT`. |
-| **Tujuan & Penyaluran** | `distribution_targets` (`id`) | `stock_movements` (`distribution_target_id`) | **1 : N** (One-to-Many, Opsional) | `ON UPDATE CASCADE`<br>`ON DELETE SET NULL` | Mencatat posko/titik bencana penerima bantuan pada transaksi `OUT`. Bernilai NULL untuk transaksi `IN`. |
+| Jenis Relasi | Tabel Induk (Parent) | Tabel Anak (Child) | Kolom Penghubung (FK) | Aturan Constraint | Implementasi & Alasan Bisnis |
+| :---: | :--- | :--- | :--- | :--- | :--- |
+| **One-to-One<br>(1 : 1)** | `users` (`id`) | `user_profiles` (`user_id`) | `user_id` bertipe `UNIQUE` | `ON UPDATE CASCADE`<br>`ON DELETE CASCADE` | Memisahkan data otentikasi login (`username`, `password_hash`, `role`) dengan data profil pribadi (`full_name`, `phone`, `address`). Setiap akun tepat memiliki satu profil. |
+| **Many-to-Many<br>(M : N)** | `products` (`id`)<br>`suppliers` (`id`) | `product_suppliers`<br>*(Junction Table)* | Composite PK:<br>`(product_id, supplier_id)` | `ON UPDATE CASCADE`<br>`ON DELETE CASCADE` | Menghubungkan banyak produk dengan banyak supplier donatur sekaligus menyimpan harga referensi pasokan. Pasangan foreign key tidak akan pernah duplikat. |
+| **One-to-Many<br>(1 : N)** | `categories` (`id`) | `products` (`category_id`) | `products.category_id` | `ON UPDATE CASCADE`<br>`ON DELETE RESTRICT` | Satu kategori menampung banyak jenis produk. Kategori tidak dapat dihapus jika masih ada produk aktif di dalamnya. |
+| **One-to-Many<br>(1 : N)** | `products` (`id`) | `stock_movements` (`product_id`) | `stock_movements.product_id` | `ON UPDATE CASCADE`<br>`ON DELETE RESTRICT` | Satu produk memiliki riwayat transaksi masuk dan keluar. Produk tidak boleh dihapus sembarangan jika memiliki riwayat mutasi. |
+| **One-to-Many<br>(1 : N)** | `users` (`id`) | `stock_movements` (`user_id`) | `stock_movements.user_id` | `ON UPDATE CASCADE`<br>`ON DELETE RESTRICT` | Menjamin audit trail: setiap mutasi wajib mencatat operator (admin/staff) yang mengeksekusi transaksi. |
+| **One-to-Many<br>(1 : N)** | `suppliers` (`id`) | `stock_movements` (`supplier_id`) | `stock_movements.supplier_id` | `ON UPDATE CASCADE`<br>`ON DELETE SET NULL` | Mencatat asal donatur/supplier pada transaksi `IN`. Bernilai NULL untuk transaksi `OUT`. |
+| **One-to-Many<br>(1 : N)** | `distribution_targets` (`id`) | `stock_movements` (`distribution_target_id`) | `stock_movements.distribution_target_id` | `ON UPDATE CASCADE`<br>`ON DELETE SET NULL` | Mencatat posko/titik bencana penerima bantuan pada transaksi `OUT`. Bernilai NULL untuk transaksi `IN`. |
 
 ---
 

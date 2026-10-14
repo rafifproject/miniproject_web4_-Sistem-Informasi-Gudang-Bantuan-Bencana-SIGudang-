@@ -38,6 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $stmt2 = $db->prepare("UPDATE users SET full_name=?, email=? WHERE id=?");
                 $stmt2->execute([$fullName, $email ?: null, $u['id']]);
+
+                // Sinkronisasi tabel relasi One-to-One: user_profiles
+                $db->prepare("INSERT INTO user_profiles (user_id, full_name) VALUES (?, ?) ON DUPLICATE KEY UPDATE full_name=VALUES(full_name)")
+                   ->execute([$u['id'], $fullName]);
+
                 $_SESSION['full_name'] = $fullName;
                 $msg = 'Profil berhasil diperbarui.';
                 $user['full_name'] = $fullName;
