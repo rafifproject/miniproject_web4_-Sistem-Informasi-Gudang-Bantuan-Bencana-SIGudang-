@@ -71,18 +71,18 @@ $rows = $st->fetchAll();
 $products  = $db->query("SELECT id,sku,name FROM products ORDER BY name")->fetchAll();
 $suppliers = $db->query("SELECT id,name,type FROM suppliers ORDER BY name")->fetchAll();
 
-$pageTitle = 'Relasi Produk-Supplier';
-$activeMenu = 'produk_supplier';
+$pageTitle = 'Pasokan Produk & Supplier';
+$activeMenu = 'produk';
 include dirname(__DIR__) . '/views/partials/header_admin.php';
 ?>
-<nav class="breadcrumb-bar"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Relasi Produk-Supplier</li></ol></nav>
+<nav class="breadcrumb-bar"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard.php">Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/produk.php">Produk</a></li><li class="breadcrumb-item active">Pasokan Supplier</li></ol></nav>
 <?php if ($msg): ?><div class="alert alert-<?= $msgType ?> alert-dismissible fade show"><?= e($msg) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?>
 
 <div class="row g-4">
   <!-- Form tambah relasi -->
   <div class="col-lg-4">
     <div class="card-panel">
-      <div class="card-panel-header">Hubungkan Produk & Supplier</div>
+      <div class="card-panel-header">Atur Pasokan & Donatur Produk</div>
       <div class="card-panel-body">
         <form method="POST">
           <?= csrfField() ?>
@@ -105,7 +105,7 @@ include dirname(__DIR__) . '/views/partials/header_admin.php';
             <label class="form-label fw-semibold">Harga Supplier (Rp)</label>
             <input type="number" name="supplier_price" class="form-control" value="0" min="0">
           </div>
-          <button type="submit" class="btn-primary-custom w-100"><i class="bi bi-link-45deg me-1"></i>Tambah Relasi</button>
+          <button type="submit" class="btn-primary-custom w-100"><i class="bi bi-link-45deg me-1"></i>Hubungkan Pasokan</button>
         </form>
       </div>
     </div>
@@ -115,7 +115,7 @@ include dirname(__DIR__) . '/views/partials/header_admin.php';
   <div class="col-lg-8">
     <div class="card-panel">
       <div class="card-panel-header">
-        <span>Daftar Relasi Produk-Supplier</span>
+        <span>Daftar Pasokan Produk & Supplier</span>
         <form method="GET" class="d-flex gap-2">
           <input type="text" name="q" class="form-control form-control-sm" placeholder="🔍 Cari..." value="<?= e($search) ?>">
           <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-search"></i></button>

@@ -108,9 +108,14 @@ include dirname(__DIR__) . '/views/partials/header_admin.php';
 
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div></div>
-  <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalProduk" onclick="resetForm()">
-    <i class="bi bi-plus-lg"></i> Tambah Produk
-  </button>
+  <div class="d-flex gap-2">
+    <a href="<?= BASE_URL ?>/admin/produk_supplier.php" class="btn btn-outline-primary">
+      <i class="bi bi-truck me-1"></i> Pasokan Supplier
+    </a>
+    <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalProduk" onclick="resetForm()">
+      <i class="bi bi-plus-lg"></i> Tambah Produk
+    </button>
+  </div>
 </div>
 
 <!-- Filter -->

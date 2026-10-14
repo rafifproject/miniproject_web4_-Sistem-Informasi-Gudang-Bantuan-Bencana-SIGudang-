@@ -118,11 +118,11 @@ Berikut adalah tangkapan layar asli (*live captured*) dan penjelasan fungsional 
 - **Fitur Utama**: CRUD data supplier, klasifikasi tipe lembaga, nomor kontak darurat, alamat, dan visibilitas publik.
 - **Teknis Backend**: Validasi integritas relasi referensial sebelum aksi hapus supplier.
 
-#### 15. Manajemen Relasi Many-to-Many Produk-Supplier (`admin/produk_supplier.php`)
-![Halaman 15: Relasi Produk Supplier](docs/screenshots/13_admin_produk_supplier.png)
-- **Tujuan**: Memetakan hubungan banyak-ke-banyak antara produk bantuan dan para supplier/donatur yang menyediakannya.
-- **Fitur Utama**: Penetapan harga referensi per supplier, penambahan relasi baru, pembaruan harga, dan penghapusan relasi.
-- **Teknis Backend**: Dikelola melalui tabel perantara (*junction table*) `product_suppliers` dengan *Composite Primary Key* `(product_id, supplier_id)`.
+#### 15. Manajemen Pasokan & Donatur Produk — Relasi Many-to-Many (`admin/produk_supplier.php`)
+![Halaman 15: Pasokan Produk dan Supplier](docs/screenshots/13_admin_produk_supplier.png)
+- **Tujuan**: Mengelola rantai pasokan dan donatur per item barang bantuan (diakses secara profesional dan terintegrasi melalui menu **Produk** > tombol **Pasokan Supplier**).
+- **Fitur Utama**: Form pemetaan pasokan produk ke lembaga donor/supplier, penetapan harga referensi pasokan, pembaruan harga, dan filter pencarian real-time. Tampilan terintegrasi rapi sebagai sub-alur Master Produk sehingga sidebar utama tetap bersih dan berstandar aplikasi *enterprise*.
+- **Teknis Backend**: Implementasi murni relasi **Many-to-Many (M : N)** menggunakan tabel perantara (*junction table*) `product_suppliers` dengan *Composite Primary Key* `(product_id, supplier_id)` dan constraint `ON DELETE CASCADE`.
 
 #### 16. Manajemen Kategori Logistik (`admin/kategori.php`)
 ![Halaman 16: Manajemen Kategori](docs/screenshots/14_admin_kategori.png)
