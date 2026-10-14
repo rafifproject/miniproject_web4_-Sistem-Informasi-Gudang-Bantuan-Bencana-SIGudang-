@@ -91,7 +91,7 @@ Berikut adalah tangkapan layar asli (*live captured*) dan penjelasan fungsional 
 - **Teknis Backend**: Penghapusan array `$_SESSION`, invalidasi cookie sesi browser, eksekusi `session_destroy()`, dan pengalihan ke login dengan pesan notifikasi.
 
 #### 11. Profil Pengguna & Ganti Password (`auth/profil.php`)
-![Halaman 11: Profil Pengguna](docs/screenshots/20_profil_pengguna.png)
+![Halaman 11: Profil Pengguna](docs/screenshots/20_profil_pengguna_v2.png)
 - **Tujuan**: Memungkinkan operator memperbarui identitas dan kata sandi akun masing-masing.
 - **Fitur Utama**: Form update nama lengkap dan email, form ubah password dengan validasi password lama, indikator peran pengguna saat ini.
 - **Teknis Backend**: Enkripsi password baru menggunakan `password_hash(PASSWORD_BCRYPT)` dengan cost 12.
@@ -101,43 +101,43 @@ Berikut adalah tangkapan layar asli (*live captured*) dan penjelasan fungsional 
 ### 🛡️ Bagian C — Administrasi & Master Data (Akses Khusus Administrator)
 
 #### 12. Dashboard Administrator (`admin/dashboard.php`)
-![Halaman 12: Dashboard Admin](docs/screenshots/10_admin_dashboard.png)
+![Halaman 12: Dashboard Admin](docs/screenshots/10_admin_dashboard_v2.png)
 - **Tujuan**: Pusat monitoring menyeluruh inventaris gudang logistik bencana bagi pengambil keputusan.
 - **Fitur Utama**: 6 kartu metrik agregat (Total Jenis Logistik, Total Fisik Stok, Estimasi Nilai Persediaan, Stok Kritis/Menipis, Total Penerimaan Masuk, Total Penyaluran Keluar), grafik mutasi bulanan (Chart.js), tabel stok kritis, dan feed transaksi terbaru.
 - **Teknis Backend**: Subquery agregat SQL `SELECT (SELECT COUNT(*)...), (SELECT SUM(stock*price)...)` yang dioptimalkan dalam 1 ronde query database.
 
 #### 13. Master Data Produk Logistik (`admin/produk.php`)
-![Halaman 13: Manajemen Produk](docs/screenshots/11_admin_produk.png)
+![Halaman 13: Manajemen Produk](docs/screenshots/11_admin_produk_v2.png)
 - **Tujuan**: Pengelolaan katalog barang logistik kemanusiaan (pangan, sandang, obat, tenda, higienitas).
-- **Fitur Utama**: Modal Tambah/Edit Produk, filter pencarian SKU & nama, filter kategori, badge status stok (Aman / Kritis), pengaturan stok minimum, serta proteksi penghapusan.
+- **Fitur Utama**: Modal Tambah/Edit Produk, tombol akses cepat **Pasokan Supplier**, filter pencarian SKU & nama, filter kategori, badge status stok (Aman / Kritis), pengaturan stok minimum, serta proteksi penghapusan.
 - **Teknis Backend**: Constraint `UNIQUE KEY` pada SKU, penanganan duplikasi via `PDOException`, dan verifikasi referensial `SELECT COUNT(*) FROM stock_movements WHERE product_id=?` (produk tidak dapat dihapus jika memiliki riwayat mutasi).
 
 #### 14. Master Data Supplier & Donatur (`admin/supplier.php`)
-![Halaman 14: Manajemen Supplier & Donatur](docs/screenshots/12_admin_supplier.png)
+![Halaman 14: Manajemen Supplier & Donatur](docs/screenshots/12_admin_supplier_v2.png)
 - **Tujuan**: Pengelolaan data lembaga donor, NGO (seperti PMI), instansi pemerintah (BNPB), dan donatur CSR swasta.
 - **Fitur Utama**: CRUD data supplier, klasifikasi tipe lembaga, nomor kontak darurat, alamat, dan visibilitas publik.
 - **Teknis Backend**: Validasi integritas relasi referensial sebelum aksi hapus supplier.
 
 #### 15. Manajemen Pasokan & Donatur Produk — Relasi Many-to-Many (`admin/produk_supplier.php`)
-![Halaman 15: Pasokan Produk dan Supplier](docs/screenshots/13_admin_produk_supplier.png)
+![Halaman 15: Pasokan Produk dan Supplier](docs/screenshots/13_admin_pasokan_supplier_v2.png)
 - **Tujuan**: Mengelola rantai pasokan dan donatur per item barang bantuan (diakses secara profesional dan terintegrasi melalui menu **Produk** > tombol **Pasokan Supplier**).
 - **Fitur Utama**: Form pemetaan pasokan produk ke lembaga donor/supplier, penetapan harga referensi pasokan, pembaruan harga, dan filter pencarian real-time. Tampilan terintegrasi rapi sebagai sub-alur Master Produk sehingga sidebar utama tetap bersih dan berstandar aplikasi *enterprise*.
 - **Teknis Backend**: Implementasi murni relasi **Many-to-Many (M : N)** menggunakan tabel perantara (*junction table*) `product_suppliers` dengan *Composite Primary Key* `(product_id, supplier_id)` dan constraint `ON DELETE CASCADE`.
 
 #### 16. Manajemen Kategori Logistik (`admin/kategori.php`)
-![Halaman 16: Manajemen Kategori](docs/screenshots/14_admin_kategori.png)
+![Halaman 16: Manajemen Kategori](docs/screenshots/14_admin_kategori_v2.png)
 - **Tujuan**: Klasifikasi kelompok barang bantuan (Pangan, Sandang, Kesehatan, Peralatan, Higienitas).
 - **Fitur Utama**: CRUD kategori, perhitungan jumlah item terdaftar dalam tiap kategori, dan proteksi integritas.
 - **Teknis Backend**: Foreign key `ON DELETE RESTRICT` pada `products.category_id`.
 
 #### 17. Laporan Agregat SQL & Cetak (`admin/laporan.php`)
-![Halaman 17: Laporan Admin](docs/screenshots/18_admin_laporan.png)
+![Halaman 17: Laporan Admin](docs/screenshots/18_admin_laporan_v2.png)
 - **Tujuan**: Pembuatan laporan inventaris mendalam untuk pertanggungjawaban audit internal dan BNPB.
 - **Fitur Utama**: 8 opsi tipe laporan (Stok Saat Ini, Stok per Kategori, Barang Masuk, Barang Keluar, Mutasi Stok, Distribusi per Tujuan, Nilai Persediaan, Aktivitas Pengguna), filter rentang tanggal, ringkasan kalkulasi otomatis, dan tombol Cetak (*Print*).
 - **Teknis Backend**: Menggunakan query agregasi tingkat lanjut dengan `JOIN`, `GROUP BY`, `SUM`, `COUNT`, `HAVING`, dan `CASE WHEN`.
 
 #### 18. Manajemen Pengguna Sistem (`admin/pengguna.php`)
-![Halaman 18: Manajemen Pengguna](docs/screenshots/19_admin_pengguna.png)
+![Halaman 18: Manajemen Pengguna](docs/screenshots/19_admin_pengguna_v2.png)
 - **Tujuan**: Administrasi akun operator sistem dan kontrol hak akses berbasis peran (RBAC).
 - **Fitur Utama**: Tambah user baru, pengubahan role (Admin / Staff), reset password operator, toggle status aktif/nonaktif akun, serta pencegahan penghapusan akun yang sedang aktif atau memiliki histori transaksi.
 - **Teknis Backend**: Hashing otomatis via `PASSWORD_BCRYPT`, proteksi ganda server-side `requireAdmin()`.
@@ -147,19 +147,19 @@ Berikut adalah tangkapan layar asli (*live captured*) dan penjelasan fungsional 
 ### 📦 Bagian D — Transaksi Gudang Logistik (Admin & Staff)
 
 #### 19. Transaksi Barang Masuk / Donasi Diterima (`admin/barang_masuk.php`)
-![Halaman 19: Transaksi Barang Masuk](docs/screenshots/15_admin_barang_masuk.png)
+![Halaman 19: Transaksi Barang Masuk](docs/screenshots/15_admin_barang_masuk_v2.png)
 - **Tujuan**: Pencatatan resmi penerimaan logistik bantuan dari donatur ke dalam gudang.
 - **Fitur Utama**: Form pemilihan produk, pemilihan supplier/donatur, input jumlah barang, nomor referensi otomatis (`REF-YYYY-XXX`), tanggal kedatangan, catatan surat jalan, serta tabel 10 transaksi penerimaan terkini.
 - **Teknis Backend**: **Transaksi Database Atomik PDO** (`$db->beginTransaction()`). Secara simultan menambah stok barang (`UPDATE products SET stock = stock + ?`) dan menyimpan baris histori ke `stock_movements`. Menerapkan pola *Post-Redirect-Get (PRG)* untuk mencegah submit ganda saat refresh browser.
 
 #### 20. Transaksi Barang Keluar / Penyaluran Posko (`admin/barang_keluar.php`)
-![Halaman 20: Transaksi Barang Keluar](docs/screenshots/16_admin_barang_keluar.png)
+![Halaman 20: Transaksi Barang Keluar](docs/screenshots/16_admin_barang_keluar_v2.png)
 - **Tujuan**: Pencatatan pengeluaran bantuan logistik untuk didistribusikan ke posko pengungsian atau titik bencana.
 - **Fitur Utama**: Form pemilihan produk dengan info sisa stok fisik, pemilihan titik posko tujuan distribusi, input kuantitas keluar, nomor referensi pengeluaran (`TRX-YYYY-XXX`), dan tabel riwayat penyaluran terbaru.
 - **Teknis Backend**: Menerapkan **Row-Level Locking (`SELECT ... FOR UPDATE`)** dalam transaksi PDO guna mencegah *race condition*. Memvalidasi `stok >= kuantitas` secara ketat; jika stok kurang, transaksi otomatis dibatalkan (`rollBack()`) sehingga stok dijamin **tidak akan pernah bernilai negatif**.
 
 #### 21. Riwayat Mutasi Stok / Audit Trail (`admin/mutasi_stok.php`)
-![Halaman 21: Audit Trail Mutasi Stok](docs/screenshots/17_admin_mutasi_stok.png)
+![Halaman 21: Audit Trail Mutasi Stok](docs/screenshots/17_admin_mutasi_stok_v2.png)
 - **Tujuan**: Lembar audit lengkap seluruh mutasi barang masuk dan keluar tanpa ada rekaman yang terlewat.
 - **Fitur Utama**: Filter tipe mutasi (IN / OUT), filter rentang tanggal, filter produk, pencarian nomor referensi, sorting dinamis, paginasi, dan badge warna pembeda arah arus logistik.
 - **Teknis Backend**: Query multi-table `JOIN` (`stock_movements`, `products`, `users`, `suppliers`, `distribution_targets`) dengan prepared statement dinamis.
@@ -218,6 +218,8 @@ Sesuai materi perkuliahan (*Slide 5, 6, 7, 8 Pertemuan 4*), database ini mengimp
 ---
 
 ### Entity Relationship Diagram (ERD)
+
+![Diagram Relasi Database / ERD](docs/screenshots/00_erd_relasi_database.png)
 
 ```mermaid
 erDiagram
