@@ -192,15 +192,16 @@ erDiagram
     }
 ```
 
-Database `gudang_bencana` dirancang dengan integritas referensial dan foreign key lengkap:
+### Matriks Relasi Antar Tabel & Integritas Referensial
 
-1. **`users`**: Akun pengguna sistem (`id`, `username`, `password_hash`, `role`, `full_name`, `email`, `is_active`, `created_at`).
-2. **`categories`**: Kategori logistik (`id`, `name`, `description`, `created_at`).
-3. **`products`**: Data barang bantuan (`id`, `category_id`, `sku`, `name`, `unit`, `stock`, `minimum_stock`, `price`, `is_public`, `created_at`).
-4. **`suppliers`**: Pemasok / Lembaga donor (`id`, `name`, `type`, `contact`, `email`, `address`, `is_public`, `created_at`).
-5. **`product_suppliers`**: Tabel relasi many-to-many (`product_id`, `supplier_id`, `supplier_price`, `created_at`) dengan composite primary key `(product_id, supplier_id)`.
-6. **`distribution_targets`**: Lokasi posko/titik bencana penerima bantuan (`id`, `name`, `location`, `description`, `created_at`).
-7. **`stock_movements`**: Riwayat transaksi mutasi logistik (`id`, `product_id`, `user_id`, `supplier_id`, `distribution_target_id`, `type`, `quantity`, `date`, `reference`, `notes`, `is_public`, `created_at`).
+| Relasi | Tabel Induk (Parent) | Tabel Anak (Child) | Jenis Relasi | Foreign Key & Constraint | Aturan Bisnis & Integritas |
+| :--- | :--- | :--- | :---: | :--- | :--- |
+| **Kategori & Produk** | `categories` (`id`) | `products` (`category_id`) | **1 : N** (One-to-Many) | `ON UPDATE CASCADE`<br>`ON DELETE RESTRICT` | Satu kategori menampung banyak produk. Kategori tidak dapat dihapus jika masih ada produk di dalamnya. |
+| **Produk & Supplier** | `products` (`id`)<br>`suppliers` (`id`) | `product_suppliers`<br>(Junction Table) | **M : N** (Many-to-Many) | Composite PK `(product_id, supplier_id)`<br>`ON DELETE CASCADE` | Satu produk dapat disediakan banyak supplier, dan satu supplier dapat memasok banyak produk dengan penetapan harga per supplier. |
+| **Produk & Mutasi Stok** | `products` (`id`) | `stock_movements` (`product_id`) | **1 : N** (One-to-Many) | `ON UPDATE CASCADE`<br>`ON DELETE RESTRICT` | Satu produk memiliki riwayat transaksi masuk/keluar. Produk tidak boleh dihapus sembarangan jika memiliki riwayat mutasi. |
+| **Operator & Mutasi Stok** | `users` (`id`) | `stock_movements` (`user_id`) | **1 : N** (One-to-Many) | `ON UPDATE CASCADE`<br>`ON DELETE RESTRICT` | Menjamin audit trail: setiap mutasi wajib mencatat operator (admin/staff) yang mengeksekusi transaksi. |
+| **Supplier & Bantuan Masuk** | `suppliers` (`id`) | `stock_movements` (`supplier_id`) | **1 : N** (One-to-Many, Opsional) | `ON UPDATE CASCADE`<br>`ON DELETE SET NULL` | Mencatat asal donatur/supplier pada transaksi `IN`. Bernilai NULL untuk transaksi `OUT`. |
+| **Tujuan & Penyaluran** | `distribution_targets` (`id`) | `stock_movements` (`distribution_target_id`) | **1 : N** (One-to-Many, Opsional) | `ON UPDATE CASCADE`<br>`ON DELETE SET NULL` | Mencatat posko/titik bencana penerima bantuan pada transaksi `OUT`. Bernilai NULL untuk transaksi `IN`. |
 
 ---
 
