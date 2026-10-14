@@ -71,18 +71,18 @@ $rows = $st->fetchAll();
 $products  = $db->query("SELECT id,sku,name FROM products ORDER BY name")->fetchAll();
 $suppliers = $db->query("SELECT id,name,type FROM suppliers ORDER BY name")->fetchAll();
 
-$pageTitle = 'Pasokan Produk & Supplier';
-$activeMenu = 'produk';
+$pageTitle = 'Pasokan Supplier';
+$activeMenu = 'produk_supplier';
 include dirname(__DIR__) . '/views/partials/header_admin.php';
 ?>
-<nav class="breadcrumb-bar"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard.php">Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/produk.php">Produk</a></li><li class="breadcrumb-item active">Pasokan Supplier</li></ol></nav>
+<nav class="breadcrumb-bar"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard.php">Dashboard</a></li><li class="breadcrumb-item active">Pasokan Supplier</li></ol></nav>
 <?php if ($msg): ?><div class="alert alert-<?= $msgType ?> alert-dismissible fade show"><?= e($msg) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?>
 
 <div class="row g-4">
   <!-- Form tambah relasi -->
   <div class="col-lg-4">
     <div class="card-panel">
-      <div class="card-panel-header">Atur Pasokan & Donatur Produk</div>
+      <div class="card-panel-header">Atur Pasokan Supplier</div>
       <div class="card-panel-body">
         <form method="POST">
           <?= csrfField() ?>

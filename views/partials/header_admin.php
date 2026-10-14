@@ -79,6 +79,11 @@ $activeMenu = $activeMenu ?? '';
         <i class="bi bi-tags nav-icon"></i> Kategori
       </a>
     </div>
+    <div class="nav-item">
+      <a href="<?= BASE_URL ?>/admin/produk_supplier.php" class="nav-link <?= $activeMenu==='produk_supplier'?'active':'' ?>">
+        <i class="bi bi-truck nav-icon"></i> Pasokan Supplier
+      </a>
+    </div>
 
     <div class="nav-section-label">Laporan</div>
     <div class="nav-item">

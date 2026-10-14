@@ -219,8 +219,6 @@ Sesuai materi perkuliahan (*Slide 5, 6, 7, 8 Pertemuan 4*), database ini mengimp
 
 ### Entity Relationship Diagram (ERD)
 
-![Diagram Relasi Database / ERD](docs/screenshots/00_erd_relasi_database.png)
-
 ```mermaid
 erDiagram
     %% 1. RELASI ONE-TO-ONE (1:1)
